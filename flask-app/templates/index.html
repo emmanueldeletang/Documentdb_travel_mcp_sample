@@ -1,1 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Travel Assistant — DocumentDB + MCP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>🧳 Travel Assistant</h1>
+    <div class="badges">
+      <span id="mcp-badge" class="badge gray">MCP: checking…</span>
+      <span id="llm-badge" class="badge gray">LLM: checking…</span>
+      <label class="cache-threshold-control" for="cache-threshold">
+        Cache threshold
+        <select id="cache-threshold" aria-label="Cache threshold percent">
+          <option value="95">95%</option>
+          <option value="96">96%</option>
+          <option value="97" selected>97%</option>
+          <option value="98">98%</option>
+          <option value="99">99%</option>
+          <option value="100">100%</option>
+        </select>
+      </label>
+      <button id="clear-cache-btn" class="btn-clear-cache" title="Clear all cached Q&A entries">🗑️ Clear Cache</button>
+    </div>
+  </header>
 
+  <main>
+    <section class="chat">
+      <div id="log" class="log"></div>
+      <form id="ask-form">
+        <input id="q" type="text" autocomplete="off"
+               placeholder="Ask in plain English — e.g. Top 3 destinations by revenue" />
+        <button type="submit">Ask</button>
+      </form>
+    </section>
+
+    <aside class="sidebar">
+      <h3>Try these</h3>
+      <ul class="examples">
+        <li>How many confirmed reservations, and total booked revenue?</li>
+        <li>Top 3 destination cities by total revenue.</li>
+        <li>Average nights stayed per region.</li>
+        <li>Who are my top 5 customers by spend?</li>
+        <li>Revenue by month for 2026.</li>
+        <li>Show 5 sample reservations.</li>
+      </ul>
+
+      <h3>MCP tools</h3>
+      <div id="tools" class="tools">loading…</div>
+    </aside>
+  </main>
+
+  <script>
+    const log = document.getElementById('log');
+
+    function add(role, html) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.innerHTML = html;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+      return div;
+    }
+
+    function esc(s) {
+      return (s || '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    }
+
+    function renderTrace(trace) {
+      if (!trace || !trace.length) return '';
+      return trace.map(t => `
+        <details class="trace">
+          <summary>🔧 ${esc(t.tool)}</summary>
+          <div class="label">Arguments</div>
+          <pre>${esc(JSON.stringify(t.arguments, null, 2))}</pre>
+          <div class="label">Result</div>
+          <pre>${esc(t.result)}</pre>
+        </details>`).join('');
+    }
+
+    function renderMetrics(data) {
+      const metrics = data.metrics || {};
+      const cache = data.cache || {};
+      const cacheHit = !!cache.hit;
+      const matchType = cache.match_type ? ` (${esc(cache.match_type)})` : '';
+      const sim = typeof cache.similarity === 'number' && cache.match_type === 'vector'
+        ? `, sim ${cache.similarity.toFixed(3)}` : '';
+      const threshold = Number(cache.threshold_percent || 97);
+      const execMs = Number(metrics.execution_ms || 0);
+      const used = Number(metrics.tokens_used || 0);
+      const saved = Number(metrics.tokens_saved || 0);
+
+      return `
+        <div class="metrics">
+          <span class="metric-chip">threshold: ${threshold}%</span>
+          <span class="metric-chip ${cacheHit ? 'hit' : 'miss'}">cache: ${cacheHit ? 'hit' : 'miss'}${matchType}${sim}</span>
+          <span class="metric-chip">tokens used: ${used}</span>
+          <span class="metric-chip">tokens saved: ${saved}</span>
+          <span class="metric-chip">time: ${execMs} ms</span>
+        </div>
+      `;
+    }
+
+    async function ask(question) {
+      add('user', esc(question));
+      const thinking = add('bot', '<em>thinking…</em>');
+      try {
+        const cacheThresholdPercent = Number(document.getElementById('cache-threshold').value || 97);
+        const r = await fetch('/api/ask', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ question, cache_threshold_percent: cacheThresholdPercent })
+        });
+        const data = await r.json();
+        if (data.error) {
+          thinking.innerHTML = '<span class="err">⚠️ ' + esc(data.error) + '</span>';
+          return;
+        }
+        let modeTag = '';
+        if (data.mode === 'offline') modeTag = '<span class="badge amber small">offline preset</span> ';
+        if (data.mode === 'cache') modeTag = '<span class="badge green small">cache hit</span> ';
+        thinking.innerHTML =
+          modeTag +
+          esc(data.answer).replace(/\n/g, '<br>') +
+          renderMetrics(data) +
+          renderTrace(data.trace);
+      } catch (e) {
+        thinking.innerHTML = '<span class="err">⚠️ ' + esc(e.message) + '</span>';
+      }
+    }
+
+    document.getElementById('ask-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const q = document.getElementById('q');
+      if (q.value.trim()) { ask(q.value.trim()); q.value = ''; }
+    });
+
+    document.querySelectorAll('.examples li').forEach(li =>
+      li.addEventListener('click', () => ask(li.textContent.trim())));
+
+    document.getElementById('clear-cache-btn').addEventListener('click', async () => {
+      if (!confirm('Delete all cached Q&A entries?')) return;
+      try {
+        const r = await fetch('/api/clear-cache', { method: 'POST' });
+        const data = await r.json();
+        if (data.success) {
+          add('bot', '✅ Cache cleared: ' + data.message);
+        } else {
+          add('bot', '⚠️ ' + esc(data.error || 'Failed to clear cache'));
+        }
+      } catch (e) {
+        add('bot', '⚠️ ' + esc(e.message));
+      }
+    });
+
+    async function init() {
+      try {
+        const s = await (await fetch('/api/status')).json();
+        const mcp = document.getElementById('mcp-badge');
+        mcp.textContent = 'MCP: ' + (s.mcp_connected ? 'connected' : 'not connected');
+        mcp.className = 'badge ' + (s.mcp_connected ? 'green' : 'red');
+        const llm = document.getElementById('llm-badge');
+        llm.textContent = 'LLM: ' + (s.llm_available ? 'on' : 'offline mode');
+        llm.className = 'badge ' + (s.llm_available ? 'green' : 'amber');
+        if (!s.mcp_connected && s.mcp_error) add('bot',
+          '<span class="err">MCP server not reachable: ' + esc(s.mcp_error) +
+          '<br>Is DocumentDB running and the data loaded?</span>');
+      } catch (e) {}
+
+      try {
+        const t = await (await fetch('/api/tools')).json();
+        const box = document.getElementById('tools');
+        box.innerHTML = (t.tools || []).map(x =>
+          `<div class="tool" title="${esc(x.description)}">${esc(x.name)}</div>`).join('')
+          || '<em>none</em>';
+      } catch (e) {
+        document.getElementById('tools').innerHTML = '<em>unavailable</em>';
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
