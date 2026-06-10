@@ -1,0 +1,102 @@
+[
+  {
+    "_id": "FL-AF1080",
+    "airline": "Air France",
+    "origin": "CDG",
+    "destination": "JFK",
+    "dest_city": "New York",
+    "duration_min": 480,
+    "cabin": "economy",
+    "base_fare": 540
+  },
+  {
+    "_id": "FL-AF0276",
+    "airline": "Air France",
+    "origin": "CDG",
+    "destination": "NRT",
+    "dest_city": "Tokyo",
+    "duration_min": 720,
+    "cabin": "economy",
+    "base_fare": 760
+  },
+  {
+    "_id": "FL-BA0506",
+    "airline": "British Airways",
+    "origin": "LHR",
+    "destination": "FCO",
+    "dest_city": "Rome",
+    "duration_min": 155,
+    "cabin": "economy",
+    "base_fare": 130
+  },
+  {
+    "_id": "FL-VY8000",
+    "airline": "Vueling",
+    "origin": "ORY",
+    "destination": "BCN",
+    "dest_city": "Barcelona",
+    "duration_min": 105,
+    "cabin": "economy",
+    "base_fare": 90
+  },
+  {
+    "_id": "FL-EK0074",
+    "airline": "Emirates",
+    "origin": "CDG",
+    "destination": "DXB",
+    "dest_city": "Dubai",
+    "duration_min": 405,
+    "cabin": "business",
+    "base_fare": 2100
+  },
+  {
+    "_id": "FL-TG0931",
+    "airline": "Thai Airways",
+    "origin": "CDG",
+    "destination": "BKK",
+    "dest_city": "Bangkok",
+    "duration_min": 690,
+    "cabin": "economy",
+    "base_fare": 680
+  },
+  {
+    "_id": "FL-AM0007",
+    "airline": "Aeromexico",
+    "origin": "CDG",
+    "destination": "CUN",
+    "dest_city": "Cancun",
+    "duration_min": 700,
+    "cabin": "economy",
+    "base_fare": 720
+  },
+  {
+    "_id": "FL-QF0002",
+    "airline": "Qantas",
+    "origin": "LHR",
+    "destination": "SYD",
+    "dest_city": "Sydney",
+    "duration_min": 1320,
+    "cabin": "economy",
+    "base_fare": 1150
+  },
+  {
+    "_id": "FL-AF0990",
+    "airline": "Air France",
+    "origin": "CDG",
+    "destination": "CPT",
+    "dest_city": "Cape Town",
+    "duration_min": 705,
+    "cabin": "economy",
+    "base_fare": 810
+  },
+  {
+    "_id": "FL-AZ0319",
+    "airline": "ITA Airways",
+    "origin": "CDG",
+    "destination": "FCO",
+    "dest_city": "Rome",
+    "duration_min": 130,
+    "cabin": "economy",
+    "base_fare": 120
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "_id": "DEST-PAR",
+    "city": "Paris",
+    "country": "France",
+    "region": "Europe",
+    "category": "city-break",
+    "avg_nightly_rate": 220,
+    "rating": 4.7,
+    "tags": [
+      "culture",
+      "food",
+      "romance"
+    ]
+  },
+  {
+    "_id": "DEST-ROM",
+    "city": "Rome",
+    "country": "Italy",
+    "region": "Europe",
+    "category": "city-break",
+    "avg_nightly_rate": 190,
+    "rating": 4.6,
+    "tags": [
+      "history",
+      "food",
+      "art"
+    ]
+  },
+  {
+    "_id": "DEST-BCN",
+    "city": "Barcelona",
+    "country": "Spain",
+    "region": "Europe",
+    "category": "beach",
+    "avg_nightly_rate": 170,
+    "rating": 4.5,
+    "tags": [
+      "beach",
+      "nightlife",
+      "architecture"
+    ]
+  },
+  {
+    "_id": "DEST-NYC",
+    "city": "New York",
+    "country": "United States",
+    "region": "North America",
+    "category": "city-break",
+    "avg_nightly_rate": 310,
+    "rating": 4.4,
+    "tags": [
+      "shopping",
+      "broadway",
+      "food"
+    ]
+  },
+  {
+    "_id": "DEST-CUN",
+    "city": "Cancun",
+    "country": "Mexico",
+    "region": "North America",
+    "category": "resort",
+    "avg_nightly_rate": 260,
+    "rating": 4.3,
+    "tags": [
+      "beach",
+      "all-inclusive",
+      "family"
+    ]
+  },
+  {
+    "_id": "DEST-TYO",
+    "city": "Tokyo",
+    "country": "Japan",
+    "region": "Asia",
+    "category": "city-break",
+    "avg_nightly_rate": 240,
+    "rating": 4.8,
+    "tags": [
+      "food",
+      "technology",
+      "culture"
+    ]
+  },
+  {
+    "_id": "DEST-BKK",
+    "city": "Bangkok",
+    "country": "Thailand",
+    "region": "Asia",
+    "category": "city-break",
+    "avg_nightly_rate": 110,
+    "rating": 4.2,
+    "tags": [
+      "food",
+      "temples",
+      "budget"
+    ]
+  },
+  {
+    "_id": "DEST-DXB",
+    "city": "Dubai",
+    "country": "UAE",
+    "region": "Middle East",
+    "category": "resort",
+    "avg_nightly_rate": 300,
+    "rating": 4.5,
+    "tags": [
+      "luxury",
+      "shopping",
+      "desert"
+    ]
+  },
+  {
+    "_id": "DEST-CPT",
+    "city": "Cape Town",
+    "country": "South Africa",
+    "region": "Africa",
+    "category": "adventure",
+    "avg_nightly_rate": 150,
+    "rating": 4.6,
+    "tags": [
+      "nature",
+      "wine",
+      "safari"
+    ]
+  },
+  {
+    "_id": "DEST-SYD",
+    "city": "Sydney",
+    "country": "Australia",
+    "region": "Oceania",
+    "category": "beach",
+    "avg_nightly_rate": 230,
+    "rating": 4.5,
+    "tags": [
+      "beach",
+      "harbour",
+      "nature"
+    ]
+  }
+]

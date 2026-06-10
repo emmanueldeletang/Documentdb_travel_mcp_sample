@@ -1,0 +1,110 @@
+[
+  {
+    "_id": "CUST-1001",
+    "name": "Emma Martin",
+    "email": "emma.martin@example.com",
+    "country": "Germany",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 36048,
+    "joined": "2022-05-17"
+  },
+  {
+    "_id": "CUST-1002",
+    "name": "Liam Bernard",
+    "email": "liam.bernard@example.com",
+    "country": "France",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 13434,
+    "joined": "2024-10-17"
+  },
+  {
+    "_id": "CUST-1003",
+    "name": "Olivia Dubois",
+    "email": "olivia.dubois@example.com",
+    "country": "Germany",
+    "loyalty_tier": "gold",
+    "loyalty_points": 11395,
+    "joined": "2024-04-24"
+  },
+  {
+    "_id": "CUST-1004",
+    "name": "Noah Thomas",
+    "email": "noah.thomas@example.com",
+    "country": "Belgium",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 12280,
+    "joined": "2022-03-24"
+  },
+  {
+    "_id": "CUST-1005",
+    "name": "Ava Robert",
+    "email": "ava.robert@example.com",
+    "country": "France",
+    "loyalty_tier": "silver",
+    "loyalty_points": 3478,
+    "joined": "2024-02-24"
+  },
+  {
+    "_id": "CUST-1006",
+    "name": "Lucas Petit",
+    "email": "lucas.petit@example.com",
+    "country": "France",
+    "loyalty_tier": "gold",
+    "loyalty_points": 91924,
+    "joined": "2024-01-22"
+  },
+  {
+    "_id": "CUST-1007",
+    "name": "Mia Durand",
+    "email": "mia.durand@example.com",
+    "country": "Belgium",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 77236,
+    "joined": "2022-07-24"
+  },
+  {
+    "_id": "CUST-1008",
+    "name": "Hugo Leroy",
+    "email": "hugo.leroy@example.com",
+    "country": "France",
+    "loyalty_tier": "gold",
+    "loyalty_points": 20926,
+    "joined": "2023-05-16"
+  },
+  {
+    "_id": "CUST-1009",
+    "name": "Chloe Moreau",
+    "email": "chloe.moreau@example.com",
+    "country": "France",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 28221,
+    "joined": "2022-11-21"
+  },
+  {
+    "_id": "CUST-1010",
+    "name": "Louis Simon",
+    "email": "louis.simon@example.com",
+    "country": "France",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 12676,
+    "joined": "2023-01-06"
+  },
+  {
+    "_id": "CUST-1011",
+    "name": "Jade Laurent",
+    "email": "jade.laurent@example.com",
+    "country": "France",
+    "loyalty_tier": "silver",
+    "loyalty_points": 5695,
+    "joined": "2023-07-30"
+  },
+  {
+    "_id": "CUST-1012",
+    "name": "Gabriel Michel",
+    "email": "gabriel.michel@example.com",
+    "country": "Switzerland",
+    "loyalty_tier": "bronze",
+    "loyalty_points": 49615,
+    "joined": "2021-06-11"
+  }
+]
