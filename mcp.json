@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "documentdb": {
+      "command": "npx",
+      "args": ["-y", "github:microsoft/documentdb-mcp"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "AUTH_REQUIRED": "false",
+        "TRUST_LOCAL_STDIO": "true",
+        "CONNECTION_PROFILES": "{\"default\":{\"authMode\":\"connectionString\",\"uriEnv\":\"DOCUMENTDB_URI\"}}",
+        "DOCUMENTDB_URI": "mongodb+srv://your:your@your.global.mongocluster.cosmos.azure.com/?tls=true&retrywrites=false&maxIdleTimeMS=120000",
+        "ENABLE_WRITE_TOOLS": "true",
+        "ENABLE_MANAGEMENT_TOOLS": "true"
+      }
+    }
+  }
+}
