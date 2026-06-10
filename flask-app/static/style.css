@@ -1,1 +1,95 @@
+:root {
+  --bg: #0f172a; --panel: #1e293b; --panel2: #273449;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8; --accent2: #0ea5e9;
+  --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --gray: #64748b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column;
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; background: var(--panel); border-bottom: 1px solid #334155;
+}
+header h1 { font-size: 18px; margin: 0; }
+.badges { display: flex; gap: 8px; align-items: center; }
+.cache-threshold-control {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 12px; font-weight: 600;
+}
+.cache-threshold-control select {
+  border: 1px solid #334155;
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+.btn-clear-cache {
+  padding: 4px 12px; border: 1px solid #CBD5E1; border-radius: 6px;
+  background: transparent; color: #94A3B8; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-clear-cache:hover {
+  border-color: #EF4444; color: #EF4444; background: #FEE2E2;
+}
+.badge {
+  font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 600; color: #0b1220;
+}
+.badge.small { font-size: 10px; padding: 2px 7px; }
+.badge.green { background: var(--green); }
+.badge.red   { background: var(--red); color: #fff; }
+.badge.amber { background: var(--amber); }
+.badge.gray  { background: var(--gray); color: #fff; }
 
+main { flex: 1; display: grid; grid-template-columns: 1fr 320px; gap: 0; overflow: hidden; }
+.chat { display: flex; flex-direction: column; padding: 18px; overflow: hidden; }
+.log { flex: 1; overflow-y: auto; padding-right: 8px; }
+.msg { max-width: 80%; padding: 11px 14px; border-radius: 12px; margin: 8px 0; line-height: 1.45; }
+.msg.user { background: var(--accent2); color: #04263a; margin-left: auto; }
+.msg.bot  { background: var(--panel); border: 1px solid #334155; }
+.err { color: #fecaca; }
+
+form#ask-form { display: flex; gap: 8px; margin-top: 12px; }
+#q {
+  flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #334155;
+  background: var(--panel2); color: var(--text); font-size: 15px;
+}
+#q:focus { outline: 2px solid var(--accent); }
+button {
+  padding: 0 20px; border: 0; border-radius: 10px; background: var(--accent);
+  color: #04263a; font-weight: 700; cursor: pointer; font-size: 15px;
+}
+button:hover { background: #7dd3fc; }
+
+.sidebar { background: var(--panel); border-left: 1px solid #334155; padding: 18px; overflow-y: auto; }
+.sidebar h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 18px 0 8px; }
+.sidebar h3:first-child { margin-top: 0; }
+.examples { list-style: none; padding: 0; margin: 0; }
+.examples li {
+  background: var(--panel2); border: 1px solid #334155; padding: 9px 11px; border-radius: 8px;
+  margin-bottom: 7px; font-size: 13px; cursor: pointer; color: #cbd5e1;
+}
+.examples li:hover { border-color: var(--accent); color: #fff; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tool {
+  font-size: 11px; font-family: ui-monospace, monospace; background: var(--panel2);
+  border: 1px solid #334155; border-radius: 6px; padding: 3px 7px; color: #7dd3fc; cursor: help;
+}
+
+details.trace { margin-top: 10px; border-top: 1px dashed #334155; padding-top: 8px; }
+details.trace summary { cursor: pointer; font-family: ui-monospace, monospace; font-size: 12px; color: var(--accent); }
+.metrics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.metric-chip {
+  font-size: 11px; font-family: ui-monospace, monospace;
+  background: #0b1220; border: 1px solid #334155; border-radius: 999px;
+  padding: 2px 8px; color: #cbd5e1;
+}
+.metric-chip.hit { border-color: #15803d; color: #86efac; }
+.metric-chip.miss { border-color: #334155; color: #cbd5e1; }
+.label { font-size: 10px; text-transform: uppercase; color: var(--muted); margin: 8px 0 2px; }
+pre {
+  background: #0b1220; border: 1px solid #334155; border-radius: 8px; padding: 10px;
+  overflow-x: auto; font-size: 12px; margin: 0; white-space: pre-wrap; word-break: break-word;
+}
