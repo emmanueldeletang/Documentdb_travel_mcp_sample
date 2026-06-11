@@ -121,7 +121,7 @@ plus an administrator-defined connection profile:
 "TRANSPORT": "stdio",
 "AUTH_REQUIRED": "false",
 "TRUST_LOCAL_STDIO": "true",
-"CONNECTION_PROFILES": "{\"default\":{\"authMode\":\"connectionString\",\"uriEnv\":\"DOCUMENTDB_URI\"}}",
+"CONNECTION_PROFILES": "{\"default\":{\"authMode\":\"connectionString\",\"uriEnv\":\"DOCUMENTDB_URI\",\"tier\":\"write\"}}",
 "DOCUMENTDB_URI": "mongodb://your:your!@mongocluster.cosmos.azure.com/?tls=true&tlsAllowInvalidCertificates=true",
 "ENABLE_WRITE_TOOLS": "true",
 "ENABLE_MANAGEMENT_TOOLS": "true"
@@ -132,7 +132,7 @@ same shell before running `npx`:
 $env:TRANSPORT = "stdio"
 $env:AUTH_REQUIRED = "false"
 $env:TRUST_LOCAL_STDIO = "true"
-$env:CONNECTION_PROFILES = '{"default":{"authMode":"connectionString","uriEnv":"DOCUMENTDB_URI"}}'
+$env:CONNECTION_PROFILES = '{"default":{"authMode":"connectionString","uriEnv":"DOCUMENTDB_URI","tier":"write"}}'
 $env:DOCUMENTDB_URI = 'mongodb://your:your!@mongocluster.cosmos.azure.com/?tls=true&tlsAllowInvalidCertificates=true'
 npx -y github:microsoft/documentdb-mcp
 ```
