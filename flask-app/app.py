@@ -2,15 +2,19 @@
 Flask UI that consumes the DocumentDB MCP server.
 
 Routes:
-  GET  /            -> chat UI
-  GET  /api/status  -> MCP connection + LLM availability
-  GET  /api/tools   -> list MCP tools
-  POST /api/ask     -> natural-language question -> tool-calling loop -> answer
-  POST /api/call    -> manually invoke a tool (name + JSON arguments)
+    GET  /            -> chat UI
+    GET  /analysis    -> agentic analysis UI
+    GET  /api/status  -> MCP connection + LLM availability
+    GET  /api/tools   -> list MCP tools
+    POST /api/ask     -> natural-language question -> tool-calling loop -> answer
+    POST /api/call    -> manually invoke a tool (name + JSON arguments)
+    POST /api/analyze -> multi-step agentic analysis -> markdown report
 """
 from __future__ import annotations
 
+import asyncio
 import os
+import sys
 import time
 from typing import Any, cast
 
@@ -20,8 +24,25 @@ from flask import Flask, jsonify, render_template, request
 from llm import answer_with_llm, estimate_tokens, get_question_embedding, llm_available
 from mcp_client import MCPClient
 from qa_cache import QuestionCache
+from booking_agent import init_booking
+
+# Add parent directory to path so we can import agent module
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from agent.travel_agent import run as run_travel_agent
+    AGENT_AVAILABLE = True
+except ImportError:
+    AGENT_AVAILABLE = False
 
 load_dotenv()
+
+# Ensure CONNECTION_PROFILES with write tier is set in the process environment BEFORE MCPClient spawns subprocess
+if "CONNECTION_PROFILES" not in os.environ:
+    os.environ["CONNECTION_PROFILES"] = '{"default":{"authMode":"connectionString","uriEnv":"DOCUMENTDB_URI","tier":"write"}}'
+if "ENABLE_WRITE_TOOLS" not in os.environ:
+    os.environ["ENABLE_WRITE_TOOLS"] = "true"
+if "ENABLE_MANAGEMENT_TOOLS" not in os.environ:
+    os.environ["ENABLE_MANAGEMENT_TOOLS"] = "true"
 
 # How to launch the MCP server. Defaults match the sample's mcp.json.
 MCP_COMMAND = os.getenv("MCP_COMMAND", "npx")
@@ -30,20 +51,18 @@ MCP_ENV = {
     "TRANSPORT": os.getenv("TRANSPORT", "stdio"),
     "AUTH_REQUIRED": os.getenv("AUTH_REQUIRED", "false"),
     "TRUST_LOCAL_STDIO": os.getenv("TRUST_LOCAL_STDIO", "true"),
-    "CONNECTION_PROFILES": os.getenv(
-        "CONNECTION_PROFILES",
-        '{"default":{"authMode":"connectionString","uriEnv":"DOCUMENTDB_URI"}}',
-    ),
+    "CONNECTION_PROFILES": os.getenv("CONNECTION_PROFILES"),
     "DOCUMENTDB_URI": os.getenv(
         "DOCUMENTDB_URI",
         "mongodb://demo:Travel123!@localhost:10260/?tls=true&tlsAllowInvalidCertificates=true",
     ),
-    "ENABLE_WRITE_TOOLS": os.getenv("ENABLE_WRITE_TOOLS", "true"),
-    "ENABLE_MANAGEMENT_TOOLS": os.getenv("ENABLE_MANAGEMENT_TOOLS", "true"),
+    "ENABLE_WRITE_TOOLS": os.getenv("ENABLE_WRITE_TOOLS"),
+    "ENABLE_MANAGEMENT_TOOLS": os.getenv("ENABLE_MANAGEMENT_TOOLS"),
 }
 
 app = Flask(__name__)
 mcp = MCPClient(MCP_COMMAND, MCP_ARGS, MCP_ENV)
+init_booking(app, mcp) 
 cache_db = os.getenv("CACHE_DB_NAME", "traveldb")
 cache_collection = os.getenv("CACHE_COLLECTION_NAME", "qa_history")
 cache_similarity = float(os.getenv("CACHE_SIMILARITY_THRESHOLD", "0.97"))
@@ -58,6 +77,11 @@ qa_cache = QuestionCache(
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/analysis")
+def analysis():
+    return render_template("analysis.html", agent_available=AGENT_AVAILABLE)
 
 
 @app.route("/api/status")
@@ -202,6 +226,35 @@ def clear_cache():
         )
     except Exception as exc:
         return jsonify({"success": False, "error": str(exc)}), 500
+
+@app.route("/api/analyze", methods=["POST"])
+def analyze():
+    """Run the Travel Operations Analyst agent with a goal and return the markdown report."""
+    if not AGENT_AVAILABLE:
+        return jsonify({"error": "Agent not available"}), 503
+
+    body = request.get_json(silent=True)
+    payload = cast(dict[str, Any], body) if isinstance(body, dict) else {}
+    goal = payload.get("goal", "").strip()
+
+    if not goal:
+        return jsonify(
+            {
+                "error": "Empty goal",
+                "default_goal": (
+                    "Give me a revenue health check: total confirmed revenue, the top 3 "
+                    "destination cities by revenue, and any destination that looks "
+                    "underbooked. End with 2 recommendations."
+                ),
+            }
+        ), 400
+
+    try:
+        # Run the async agent and capture output
+        report = asyncio.run(run_travel_agent(goal))
+        return jsonify({"report": report, "goal": goal})
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
 
 if __name__ == "__main__":

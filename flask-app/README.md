@@ -13,8 +13,17 @@ avoid repeated LLM tokens for duplicate or semantically similar questions.
 Browser ──HTTP──> Flask (app.py)
                      │
                      ├── llm.py        NL question ─► tool calls ─► answer
+                     ├── /analysis UI  goal-driven analyst workflow + markdown report
                      └── mcp_client.py stdio ─► github:microsoft/documentdb-mcp ─► DocumentDB
 ```
+
+## Recent changes
+
+- Added an **Analysis page** at `/analysis` for multi-step, goal-driven travel operations analysis.
+- Added `/api/analyze` to run the standalone analyst loop and return a markdown report.
+- Updated Analysis UI to use the **same shared website stylesheet** (`static/style.css`) for visual consistency.
+- Increased analysis readability with larger typography, stronger contrast, and clearer status feedback.
+- Added quick goal templates (revenue health, customer analysis, destination performance).
 
 ## Prerequisites
 
@@ -76,6 +85,9 @@ The header shows two badges:
 Type a question or click one of the example prompts. Each answer includes an
 expandable **trace** showing the exact MCP tool, arguments, and raw result.
 
+For goal-driven workflows, open **http://127.0.0.1:5000/analysis**.
+The analysis page runs a multi-step agent loop and generates a markdown report.
+
 Each answer card also shows runtime metrics:
 - cache hit/miss
 - tokens used for this ask
@@ -106,6 +118,30 @@ Optional embedding config:
 - Azure OpenAI: `AZURE_OPENAI_EMBEDDING_DEPLOYMENT`
 - OpenAI: `OPENAI_EMBEDDING_MODEL`
 
+## Agent development (Travel Operations Analyst)
+
+The analyst agent is implemented in `../agent/travel_agent.py` and exposed by Flask via:
+- `GET /analysis` (UI)
+- `POST /api/analyze` (execution)
+
+Development workflow:
+1. Define the analysis objective in plain English (goal).
+2. Agent receives a system prompt with MCP usage rules.
+3. Agent iteratively calls DocumentDB tools with `connection_profile="default"`.
+4. Agent stops when it has enough evidence and returns a markdown report.
+
+Key environment variables:
+- `AGENT_MAX_STEPS` (default `8`)
+- `MCP_COMMAND` and `MCP_ARGS` (default `npx -y github:microsoft/documentdb-mcp`)
+- `DOCUMENTDB_URI` for local or Azure DocumentDB
+- Azure/OpenAI variables to enable LLM-backed planning
+
+Run the standalone agent directly for development/debugging:
+
+```bash
+python ../agent/travel_agent.py "Give me a revenue health check across destinations"
+```
+
 ## Try these
 
 - How many confirmed reservations, and total booked revenue?
@@ -123,10 +159,12 @@ Optional embedding config:
 | Method | Path          | Purpose                                            |
 |--------|---------------|----------------------------------------------------|
 | GET    | `/`           | Chat UI                                             |
+| GET    | `/analysis`   | Agentic analysis UI                                 |
 | GET    | `/api/status` | MCP connection state + LLM availability            |
 | GET    | `/api/tools`  | List the MCP server's tools                         |
 | POST   | `/api/ask`    | `{question}` → tool-calling loop → `{answer,trace}` |
 | POST   | `/api/call`   | `{tool, arguments}` → invoke one tool directly      |
+| POST   | `/api/analyze`| `{goal}` → multi-step analyst loop → markdown report |
 
 ## Troubleshooting
 

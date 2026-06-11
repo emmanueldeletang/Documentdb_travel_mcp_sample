@@ -45,8 +45,14 @@ class QuestionCache:
             return self._collection
         self._client = MongoClient(self._uri, serverSelectionTimeoutMS=5000)
         col = self._client[self._db_name][self._collection_name]
-        col.create_index("normalized_question")
-        col.create_index("created_at")
+        try:
+            col.create_index("normalized_question")
+        except Exception:
+            pass  # index may already exist with different options
+        try:
+            col.create_index("created_at")
+        except Exception:
+            pass  # index may already exist with TTL or different options
         # Create DiskANN vector index on question_vector for fast ANN search.
         # Wrapped in try/except so a pre-existing index or an older DocumentDB
         # version that doesn't yet support DiskANN won't break the application.
